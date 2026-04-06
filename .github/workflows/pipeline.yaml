@@ -16,9 +16,9 @@ jobs:
 
       - name: "Build Docker Image"
         run: |
-          docker login -u yshakya -p $DOCKERHUB_PAT
-          docker build -t yshakya/mywebsite .
-          docker push yshakya/mywebsite
+          docker login -u luxrose -p $DOCKERHUB_PAT
+          docker build -t luxrose/my-html-website .
+          docker push luxrose/my-html-website
         env:
           DOCKERHUB_PAT: ${{ secrets.DOCKERHUB_PAT }}
 
