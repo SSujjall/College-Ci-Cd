@@ -13,7 +13,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - with: 
+          fetch-depth: 0
 
+      # SonarQube Scan and Quality Gate
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: SonarQube Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # Actual Deployment Steps
       - name: "Build Docker Image"
         run: |
           docker login -u luxrose -p $DOCKERHUB_PAT
@@ -40,6 +56,6 @@ jobs:
 
       - name: "Docker Pull and Restart Docker"
         run: |
-          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker pull luxrose/my-html-app'
+          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker pull luxrose/my-html-website'
           ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker stop mynginx && docker rm mynginx'
-          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker run --name mynginx -p 80:80 -d luxrose/my-html-app'
+          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker run --name mynginx -p 80:80 -d luxrose/my-html-website'
