@@ -13,6 +13,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with: 
+          fetch-depth: 0
+
+      # SonarQube Scan and Quality Gate
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: SonarQube Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       # Actual Deployment Steps
       - name: "Build Docker Image"
